@@ -233,13 +233,7 @@ class App extends React.Component {
         </div>
 
         <FollowersBlock className='followersBlock'>
-          {this.state.githubFollowers.map(followers => (            
-            // <FInnerBlock key={followers.login} className='fInnerBlock'>
-            //   <span onClick={this.clickUser}>{followers.login}</span><br />
-            //   <b>id:</b> {followers.id}<br />
-            //   <img src={followers.avatar_url} alt={followers.avatar_url} key={followers.avatar_url} width='200' height='200' /><br />
-            //   <b>url:</b> <a href={followers.html_url}>{followers.html_url}</a><br />
-            // </FInnerBlock>       
+          {this.state.githubFollowers.map(followers => (         
             <Card className='userCard' key={followers.login}>
             <CardActionArea>
               <CardMedia
