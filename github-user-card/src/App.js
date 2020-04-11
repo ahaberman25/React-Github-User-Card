@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import ReactDOM from 'react-dom';
 
 import styled from 'styled-components';
 
@@ -9,6 +10,18 @@ import Moment from 'moment';
 // import github contribution calendar
 import GitHubCalendar from 'react-github-calendar';
 
+// import material ui components
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+
+
 
 class App extends React.Component {
   constructor() {
@@ -17,8 +30,10 @@ class App extends React.Component {
       githubUsers: [],
       githubFollowers: [],
       chooseUser: '',
+      clickUser: 'ahaberman25',
       gitContUser: 'ahaberman25'
     };
+
   }
 
   componentDidMount() {
@@ -51,10 +66,6 @@ class App extends React.Component {
     this.setState({ chooseUser: e.target.value });    
   }
 
-  submitHandler = e => {
-    e.preventDefault();
-  }
-
   fetchUser = e => {
     e.preventDefault();
     console.log('fetch')
@@ -81,16 +92,66 @@ class App extends React.Component {
       })
   };
 
-  componentDidUpdate() {
+  clickUser = e => {
+    e.preventDefault();
+    // console.log('typing: ', this.state.chooseUser)
+    this.setState({ clickUser: e.target.textContent }) 
+    console.log('clicked user', this.state.clickUser)
+  }
 
+  // clickUser = e => {
+  //   e.preventDefault();
+  //   console.log('clicked')
+
+  //   fetch(`https://api.github.com/users/${this.state.clickUser}`)
+  //     .then(res => res.json())
+  //     .then(users => {        
+  //       // console.log('users: ', users)
+  //       this.setState({ githubUsers: users });
+  //     })
+  //     .catch(err => {
+  //       console.log("ERR: ", err)
+  //       this.setState({ errMessage: err.message })
+  //     });
+      
+  //   fetch(`https://api.github.com/users/${this.state.clickUser}/followers`)
+  //     .then(res => res.json())
+  //     .then(fusers => {        
+  //       // console.log('fusers: ', fusers)
+  //       this.setState({ githubFollowers: fusers });
+  //     })
+  //     .catch(err => {
+  //       console.log('err: ', err)
+  //     })
+  // };
+
+  componentDidUpdate(prev) {
+      // if (this.state.clickUser !== prev.clickUser) {
+      //   fetch(`https://api.github.com/users/${this.state.clickUser}`)
+      //     .then(res => res.json())
+      //     .then(users => {        
+      //       // console.log('users: ', users)
+      //       this.setState({ githubUsers: users });
+      //     })
+      //     .catch(err => {
+      //       console.log("ERR: ", err)
+      //       this.setState({ errMessage: err.message })
+      //     });
+          
+      //   fetch(`https://api.github.com/users/${this.state.clickUser}/followers`)
+      //     .then(res => res.json())
+      //     .then(fusers => {        
+      //       // console.log('fusers: ', fusers)
+      //       this.setState({ githubFollowers: fusers });
+      //     })
+      //     .catch(err => {
+      //       console.log('err: ', err)
+      //     })
+      // }
   }
 
 
   render() {
-
-    // console.log('state: ', this.state.githubUsers)
-    let date = Date(this.state.githubUsers.created_at)
-
     const Title = styled.h1`
       width: 48%;
       margin: 0 auto;
@@ -109,15 +170,6 @@ class App extends React.Component {
     const UserRight = styled.div`
       width: 49%;
     `;
-    // const UserContributions = styled.div`
-    //   width: 50%;
-    //   margin: 0 auto;
-    // `;
-
-    // const UserInput = styled.div`
-    //   width: 50%;
-    //   margin: 0 auto;
-    // `;
 
     const FollowersBlock = styled.div `
       display: flex;
@@ -135,7 +187,6 @@ class App extends React.Component {
 
 
     let userState = this.state.githubUsers
-    // console.log('date: ', date)
 
     return (
       <div className='container'>
@@ -147,7 +198,7 @@ class App extends React.Component {
             <img src={userState.avatar_url} alt={userState.avatar_url} key={userState.avatar_url} width='250' height='250' /><br />
           </UserLeft>
           <UserRight className='userRight'>
-            <b>Login:</b> {userState.login}<br />
+            <b>User:</b> {userState.login}<br />
             <b>id:</b> {userState.id}<br />          
             <b>url:</b> <a href={userState.html_url}>{userState.html_url}</a><br />
             <b>Name:</b> {userState.name}<br />
@@ -157,7 +208,7 @@ class App extends React.Component {
             <b># of followers:</b> {userState.followers}<br />
             <b># of following:</b> {userState.following}<br />
             <b>Bio</b>: {userState.bio}<br />
-            <b>Joined:</b> {Moment(date).format('MMMM/YYYY')}<br />
+            <b>Joined:</b> {Moment(this.state.githubUsers.created_at).format('MMMM Do YYYY')}<br />
           </UserRight>
         </UserCard>
 
@@ -168,24 +219,51 @@ class App extends React.Component {
 
           <form onSubmit={this.submitHandler}>
             <div className='userInput'>
-              <input
+              <TextField
+                id='outlined-basic'
                 type="text"
+                label='enter username'
                 value={this.state.chooseUser}
                 onChange={this.handleChanges}
+                variant="outlined"
               />
-              <button onClick={this.fetchUser}>Choose a User</button>
+              <Button variant="outlined" color="primary" onClick={this.fetchUser} type='submit'>Submit</Button>
             </div>
           </form>
         </div>
 
         <FollowersBlock className='followersBlock'>
           {this.state.githubFollowers.map(followers => (            
-            <FInnerBlock key={followers.login} className='fInnerBlock'>
-              <b>Login:</b> {followers.login}<br />
-              <b>id:</b> {followers.id}<br />
-              <img src={followers.avatar_url} alt={followers.avatar_url} key={followers.avatar_url} width='200' height='200' /><br />
-              <b>url:</b> <a href={followers.html_url}>{followers.html_url}</a><br />
-            </FInnerBlock>           
+            // <FInnerBlock key={followers.login} className='fInnerBlock'>
+            //   <span onClick={this.clickUser}>{followers.login}</span><br />
+            //   <b>id:</b> {followers.id}<br />
+            //   <img src={followers.avatar_url} alt={followers.avatar_url} key={followers.avatar_url} width='200' height='200' /><br />
+            //   <b>url:</b> <a href={followers.html_url}>{followers.html_url}</a><br />
+            // </FInnerBlock>       
+            <Card className='userCard' key={followers.login}>
+            <CardActionArea>
+              <CardMedia
+              component='img'
+                className='userCardImage'
+                height='350'
+                image={followers.avatar_url}
+                title={followers.login}
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                  user: {followers.login}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  id: {followers.id}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions>
+              <Button size="small" color="primary">
+                <a href={followers.html_url} target='_blank'>{`Check out ${followers.login}`}</a>
+              </Button>
+            </CardActions>
+          </Card>    
           ))}
         </FollowersBlock>
       </div>

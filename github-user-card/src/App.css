@@ -52,3 +52,17 @@ body {
   width: 50%;
   margin: 0 auto;
 }
+
+.userCard {
+  width: 31%;
+  margin: 10px;
+}
+
+.userInput {
+  margin: 0 auto;
+  width: 50%;
+}
+
+#outlined-basic {
+  height: 0px;
+}
