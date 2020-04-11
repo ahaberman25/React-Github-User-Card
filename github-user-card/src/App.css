@@ -39,7 +39,16 @@
 
 /* myCss */
 
+body {
+  background: whitesmoke;
+}
+
 .container {
   margin: 0 auto;
   width: 80%;
+}
+
+.githubContainer {
+  width: 50%;
+  margin: 0 auto;
 }
