@@ -66,7 +66,8 @@ class App extends React.Component {
         this.setState({ githubUsers: users });
       })
       .catch(err => {
-        console.log("ERR: ", err);
+        console.log("ERR: ", err)
+        this.setState({ errMessage: err.message })
       });
       
     fetch(`https://api.github.com/users/${this.state.chooseUser}/followers`)
@@ -85,10 +86,15 @@ class App extends React.Component {
   }
 
 
-
   render() {
+
     // console.log('state: ', this.state.githubUsers)
     let date = Date(this.state.githubUsers.created_at)
+
+    const Title = styled.h1`
+      width: 48%;
+      margin: 0 auto;
+    `;
 
     const UserCard = styled.div `
       width: 50%;
@@ -127,11 +133,15 @@ class App extends React.Component {
       text-align: center;
     `;
 
+
     let userState = this.state.githubUsers
     // console.log('date: ', date)
 
     return (
       <div className='container'>
+        { this.state.errMessage &&
+          <h3 className="error"> { this.state.errMessage } </h3> }
+        <Title>GITHUB USER INFORMATION CARD</Title>
         <UserCard className='userCard'>
           <UserLeft className='userLeft'>
             <img src={userState.avatar_url} alt={userState.avatar_url} key={userState.avatar_url} width='250' height='250' /><br />
